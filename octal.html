@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Octal</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body style="position: relative;">
+  <div id="canvas">
+  </div>
+
+  <div id="content">
+    <h2>What if there were only 8 digits...</h2>
+    <table style="width: 100%;">
+      <tr>
+        <td style="text-align: center; vertical-align: middle;">
+          How would you write the number of dots?
+          <br><br>
+          <div id="numbers"></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <script src="js/svg-0.32-6-g74614e0.js"></script>
+  <script src="js/number-border.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
+  <script>
+    var nDigits = 8;
+    var dotRadius = 8;
+    var borderRedrawTimeout;
+    $(window).resize(function () {
+      clearTimeout(borderRedrawTimeout);
+      borderRedrawTimeout = setTimeout(function () {
+        NumberBorder.clear();
+        NumberBorder.draw(nDigits);
+      }, 500);
+    });
+
+    function addRow(rowNumber) {
+      var $row = $('<span class="number" id="number' + rowNumber + '">' +
+          '  <span class="dots-column"></span>' +
+          '  <span class="equal-sign">=</span>' +
+          '  <input type="text" class="input-column">' +
+          '</span>');
+      $row.appendTo('#numbers');
+      var $canvas = $row.find('.dots-column');
+      var $input = $row.find('input');
+
+      var rowHeight = $input.outerHeight();
+      $canvas.width(rowNumber * dotRadius * 4);
+      $canvas.height(rowHeight);
+      var width = $canvas.width();
+      var draw = SVG($canvas[0]);
+      for (var i = 0; i < rowNumber; i++) {
+        Math.random()
+        draw.circle(dotRadius * 2)
+            .center(width - dotRadius * 2 - i * dotRadius * 4, rowHeight / 2)
+            .opacity(0.2 + 0.6 * Math.random());
+      }
+
+      $row.keyup(function (e) {
+        if (e.keyCode === 13) {
+          var $nextRow = $('#number' + (rowNumber + 1));
+          if ($nextRow.length > 0) {
+            $nextRow.find('input').focus();
+          }
+          return;
+        }
+        var expected = rowNumber.toString(nDigits);
+        var val = $input.val();
+        if (val === expected) {
+          // chartreuse4 from http://www.december.com/html/spec/color2.html
+          $row.css('border', '3px solid #458b00');
+          // update margin to compensate for border width change so that elements don't shift around
+          $row.css('margin', '3px');
+        } else if (expected.indexOf(val) === 0) {
+          // clear element style and go back to class styling
+          $row.css('border', '');
+          // update margin to compensate for border width change so that elements don't shift around
+          $row.css('margin', '5px');
+        } else {
+          // orangered from http://www.december.com/html/spec/color1.html
+          $row.css('border', '3px solid #ff4500');
+          // update margin to compensate for border width change so that elements don't shift around
+          $row.css('margin', '3px');
+        }
+      });
+
+      return $row;
+    }
+    for (var i = 1; i <= 8; i++) {
+      var $row = addRow(i);
+      if (i <= 3) {
+        var $input = $row.find('input');
+        $input.val(i);
+        $input.trigger('keyup');
+      }
+      if (i === 4) {
+        $row.find('input').focus();
+      }
+    }
+    $(document).ready(function() {
+      // scroll to top of page fixes weird svg bug on firefox where drawing is all incorrect
+      window.scrollTo(0, 0);
+      NumberBorder.draw(nDigits);
+    });
+  </script>
+</body>
+</html>
+
