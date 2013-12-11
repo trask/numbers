@@ -1,58 +1,17 @@
-body {
-  color: #333;
-  margin: 0;
-}
-
-input {
-  color: #333;
-}
-
-.number {
-  display: inline-block;
-  padding: 5px;
-  border: 1px solid #888;
-  border-radius: 6px;
-  margin: 5px;
-}
-
-.number > .dots-column {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.number > .equal-sign {
-  display: inline-block;
-  font-size: 32px;
-  vertical-align: middle;
-  padding-right: 10px;
-}
-
-.number > input {
-  padding: 4px 8px;
-  font-size: 32px;
-  width: 1.5em;
-  vertical-align: middle;
-}
-
-#numbers {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 #canvas {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }
 
 #content {
-  padding: 20%;
-}
-
-/* prevent vertical scrollbar from appearing
-https://bugzilla.mozilla.org/show_bug.cgi?id=405116 */
-svg {
-  display: block;
+  position: fixed;
+  top: 15%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
 }
 
 #content > h2 {

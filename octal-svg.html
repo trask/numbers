@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Octal</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <div id="canvas">
+  </div>
+
+  <div id="content">
+    <h2>What if there were only 8 digits?</h2>
+  </div>
+
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
+  <script src="js/svg-0.32-6-g74614e0.js"></script>
+  <script src="js/helvetica.js"></script>
+  <script>
+    function randomColor() {
+      return '#' + (Math.random().toString(16) + '000000').slice(2, 8);
+    }
+    function rboxToCircle(rbox) {
+      return {
+        x: rbox.x + rbox.width / 2,
+        y: rbox.y + rbox.height / 2,
+        radius: Math.sqrt(Math.pow(rbox.width / 2, 2) + Math.pow(rbox.height / 2, 2)) / 2
+      };
+    }
+    var draw = SVG('canvas');
+    var width = $(window).width();
+    var height = $(window).height();
+
+    var circles = [];
+
+    var maxSize = 120;
+    for (var i = 0; i < 800; i++) {
+      if (maxSize > 30) {
+        maxSize -= 0.2;
+      }
+      var digit = i % 8;
+      var border = 0.1 * Math.random();
+      if (border > 0.05) {
+        border += 0.9;
+      }
+      var x, y;
+      if (Math.random() < 0.5) {
+        x = border;
+        y = Math.random();
+      } else {
+        y = border;
+        x = Math.random();
+      }
+      var degrees = -45 + 90 * Math.random();
+      var size = 40 + maxSize * Math.random();
+      var radius = size * 0.375;
+      var text = draw.text('' + digit)
+          .font({ family: 'Source Sans Pro', size: size, anchor: 'middle', leading: '1em' })
+          .center(radius + x * (width - 2 * radius), -5 + radius + y * (height - 2 * radius))
+          .rotate(degrees);
+
+      var circle = rboxToCircle(text.rbox());
+
+      var overlap = false;
+      for (var j = 0; j < circles.length; j++) {
+        if (Math.pow(circle.x - circles[j].x, 2) + Math.pow(circle.y - circles[j].y, 2) <
+            Math.pow(circle.radius + circles[j].radius, 2)) {
+          overlap = true;
+          break;
+        }
+      }
+      if (overlap) {
+        text.remove();
+      } else {
+        circles.push(circle);
+        text.fill({ color: randomColor() });
+        text.style('cursor', 'pointer');
+        text.mouseover(function() {
+          this.animate().scale(1.1);
+        })
+      }
+    }
+  </script>
+</body>
+</html>
+
